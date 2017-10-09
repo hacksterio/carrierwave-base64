@@ -16,7 +16,8 @@ module Carrierwave
           )
         end
           
-        attr_writer_name = options.has_key?(:attr_writer_name) ? options[:attr_writer_name] : attribute
+        attr_writer_name = options.has_key?(:attr_writer_name) ? 
+            options[:attr_writer_name] : attribute
 
         define_method "#{attr_writer_name}=" do |data|
           return if data == send(attribute).to_s
@@ -25,8 +26,9 @@ module Carrierwave
             send "#{attribute}_will_change!"
           end
 
-          return super(data) unless data.is_a?(String) &&
-                                    data.strip.start_with?('data')
+          unless data.is_a?(String) && data.strip.start_with?('data')
+            return attr_writer_name == attribute ? super(data) : send("#{attribute}=", data)
+          end
 
           filename = if options[:file_name].respond_to?(:call)
                        options[:file_name].call(self)
@@ -34,7 +36,12 @@ module Carrierwave
                        options[:file_name]
                      end.to_s
 
-          super Carrierwave::Base64::Base64StringIO.new(data.strip, filename)
+          io = Carrierwave::Base64::Base64StringIO.new(data.strip, filename)
+          if attr_writer_name == attribute
+            super io
+          else
+            send "#{attribute}=", io
+          end
         end
         # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
         # rubocop:enable Metrics/CyclomaticComplexity
