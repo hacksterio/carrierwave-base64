@@ -15,8 +15,10 @@ module Carrierwave
             'existing behaviour, wrap the string in a Proc'
           )
         end
+          
+        attr_writer_name = options.has_key?(:attr_writer_name) ? options[:attr_writer_name] : attribute
 
-        define_method "#{attribute}=" do |data|
+        define_method "#{attr_writer_name}=" do |data|
           return if data == send(attribute).to_s
 
           if respond_to?("#{attribute}_will_change!") && data.present?
