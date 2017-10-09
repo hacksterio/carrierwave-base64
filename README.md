@@ -1,3 +1,5 @@
+Fork to allow for `mount_base64_uploader` to coexist with `mount_uploader` on the same model/attribute.
+
 # Carrierwave::Base64
 
 [![Gem Version](https://badge.fury.io/rb/carrierwave-base64.svg)](http://badge.fury.io/rb/carrierwave-base64)
